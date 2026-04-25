@@ -1,0 +1,27 @@
+- name: Setup Docker and Monitoring Stack
+  hosts: localhost
+  connection: local
+  become: yes
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker Compose is installed
+      apt:
+        name: docker-compose
+        state: present
+
+    - name: Create project directory
+      file:
+        path: /home/nocadmin/ansible-docker-lab
+        state: directory
+        owner: nocadmin
+        group: nocadmin
+
+    - name: Run Docker Compose Stack
+      community.docker.docker_compose:
+        project_src: /home/nocadmin/docker-final-lab
+        state: present
