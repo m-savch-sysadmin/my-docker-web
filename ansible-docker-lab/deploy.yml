@@ -1,27 +1,24 @@
-- name: Setup Docker and Monitoring Stack
+- name: Wdrożenie wielu środowisk użytkowników
   hosts: localhost
-  connection: local
   become: yes
   tasks:
-    - name: Ensure Docker is installed
+    - name: Upewnij się, że Docker działa
       apt:
         name: docker.io
         state: present
-        update_cache: yes
 
-    - name: Ensure Docker Compose is installed
-      apt:
-        name: docker-compose
-        state: present
+    - name: Serwer dla Użytkownika 1
+      community.docker.docker_container:
+        name: user-one-app
+        image: httpd:alpine
+        ports:
+          - "8083:80"
+        state: started
 
-    - name: Create project directory
-      file:
-        path: /home/nocadmin/ansible-docker-lab
-        state: directory
-        owner: nocadmin
-        group: nocadmin
-
-    - name: Run Docker Compose Stack
-      community.docker.docker_compose:
-        project_src: /home/nocadmin/docker-final-lab
-        state: present
+    - name: Serwer dla Użytkownika 2
+      community.docker.docker_container:
+        name: user-two-app
+        image: httpd:alpine
+        ports:
+          - "8084:80"
+        state: started
